@@ -51,8 +51,13 @@ import random
 barrels = [s for s in range(1, 91)]
 free = ' '
 
+player = ['------ Ваша карточка -----']
+pc = ['-- Карточка компьютера ---']
 
-
+def get_num(pool):
+    case = random.choice(pool)
+    pool.remove(case)
+    return case
 
 class GeneratorCards():
 
@@ -60,56 +65,55 @@ class GeneratorCards():
         self.card = []
         self.pool = deepcopy(barrels)
 
-    def m_get_num(self):
-        case = random.choice(self.pool)
-        self.pool.remove(case)
-        return case
-
     def m_card(self):
         string = []
-        for _ in range(4):
-            string.append(free)
         for _ in range(5):
-            string.append(self.m_get_num())
-        #self.card.append(string)
-        random.shuffle(string)
+            string.append(get_num(self.pool))
+        string.sort()
+        for _ in range(4):
+            string.insert(random.randint(0, len(string)), free)
         return string
 
-    def gen_card(self):
+    def gen_card(self, text):
+        self.card.append(text)
         for i in range(1, 4):
             self.card.append(self.m_card())
+        self.card.append(['-'*22])
         return self.card
 
 
 class Game():
 
     def __init__(self):
-        pass
+        self.sac = deepcopy(barrels)
+        self.card = GeneratorCards().gen_card(player)
+        self.ii = GeneratorCards().gen_card(pc)
 
     def print_card(self, name):
-        print('{}'.format())
-
-    def person(self):
-        name = input('Введите имя игрока: ')
-        card = GeneratorCards().gen_card()
-        for i in card:
+        for i in name:
             for j in i:
                 print(j, end=' ')
             print('\n')
 
     def mainloop(self):
-        # Достаём бочонок: __ (пишем остаток __)
-        sac =
-        # Печатаем карточку игрока
-        # Печатаем карточку компьютера
-        # Спрашиваем зачеркнуть ли цифру
+         while True:
+            number = get_num(self.sac)
+            print('Новый бочонок: {} (осталось {})'.format(number, len(self.sac)))
+            self.print_card(self.card)
+            self.print_card(self.ii)
+            result = input('Зачеркнуть цифру? (y/n) ')
+        # Проверяем правильность ответа
+            for i in self.card:
+                if result == 'y':
+                    if number in self.card:
+                        print('good')
+
         # Проверяем правильность ответа
         # Проверяем цифру у компьютера
         # Выполняем действие над карточками компьютера и пользователя
-        pass
 
 
 
 a = Game()
-a.person()
+a.mainloop()
 # print(a.m_card())
